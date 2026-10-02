@@ -22,12 +22,14 @@ node tools/build.mjs        # writes dist/marco-kart.html
 
 | Action | Keyboard | Gamepad | Touch |
 |---|---|---|---|
-| Accelerate / brake | W / S or Up / Down | RT / LT | on-screen |
-| Steer | A / D or Left / Right | Left stick | on-screen |
-| Drift (hold, release to boost) | Space | A | on-screen |
-| Use item | E | X | tap the item box |
-| Swap item slots | Q or Tab | LB | tap |
-| Look back | R | RB | on-screen |
+| Accelerate | W / Up | RT or A | automatic |
+| Brake / reverse | S / Down | LT or B | BRAKE button |
+| Steer | A / D or Left / Right | Left stick or D-pad | steer pad |
+| Drift (hold while steering, release to boost) | Space or Shift | RB | DRIFT button |
+| Use item | E, Enter or Z | see in-game controls page | tap the item box |
+| Swap the two held items | Q or Tab | LB | tap the small slot |
+| Look back | C or B | Y | LOOK button |
+| Pause | Esc or P | Start | pause button |
 
 ## What's in it
 
