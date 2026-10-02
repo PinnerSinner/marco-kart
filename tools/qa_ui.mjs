@@ -1,0 +1,23 @@
+// QA: drive UI screens directly with mock data (no race needed). Usage: node tools/qa_ui.mjs [WxH] [screens,comma]
+import { launch, waitScreen } from './qa_lib.mjs';
+const size = process.argv[2] ? process.argv[2].split('x').map(Number) : [960, 540];
+const only = process.argv[3]?.split(',');
+const tag = `ui_${size[0]}x${size[1]}`;
+const g = await launch({ query: 'quality=low', w: size[0], h: size[1] });
+const { page, shot, wait, ev } = g;
+await waitScreen(page, 'title');
+const chars = ['marco', 'subnet', 'lambda', 'packet', 'carlos', 'tilly', 'rex', 'biscuit'];
+const step = async (name, fn, settle = 1800) => { if (only && !only.includes(name)) return; await ev(fn); await wait(settle); await shot(`${tag}_${name}`); console.log('shot', name); };
+const mkResults = (place) => `(() => { const ids = ${JSON.stringify(chars)}; const order = ids.filter(x => x !== 'marco'); order.splice(${place} - 1, 0, 'marco'); return order.map((c, i) => ({ place: i + 1, id: c === 'marco' ? 'player' : c, name: c, charId: c, time: 70 + i * 1.3, bestLap: 68 + i, points: [10, 8, 6, 5, 4, 3, 2, 1][i], isPlayer: c === 'marco' })); })()`;
+await step('loading', () => window.__mk.game.ui.showLoading('Building Copacabana Calçadão…', 0.6));
+await step('results1', `window.__mk.game.ui.showRaceResults(${mkResults(1)}, { trackId: 'copacabana', laps: 3 })`);
+await step('results2', `window.__mk.game.ui.showRaceResults(${mkResults(2)}, { trackId: 'blighty', laps: 3 })`);
+await step('results8', `window.__mk.game.ui.showRaceResults(${mkResults(8)}, { trackId: 'blighty', laps: 3, gp: true, raceIndex: 1, total: 4 })`);
+const standings = (rank) => `(() => { const ids = ${JSON.stringify(chars)}; const order = ids.filter(x => x !== 'marco'); order.splice(${rank} - 1, 0, 'marco'); return order.map((c, i) => ({ id: c === 'marco' ? 'player' : c, charId: c, name: c, points: [30, 24, 20, 16, 12, 9, 6, 3][i], place: i + 1, isPlayer: c === 'marco' })); })()`;
+await step('standings', `window.__mk.game.ui.showGpStandings(${standings(2)}, { raceIndex: 1, total: 4 })`, 3000);
+await step('podium_gold', `window.__mk.game.ui.showPodium({ rows: ${standings(1)}, trophy: 'gold' })`, 2500);
+await step('podium_none', `window.__mk.game.ui.showPodium({ rows: ${standings(7)}, trophy: 'none' })`, 2500);
+await step('about', () => window.__mk.game.ui.show('about'));
+await step('controls', () => window.__mk.game.ui.show('controls'));
+console.log('problems:', g.problems.join('\n') || 'none');
+await g.close();

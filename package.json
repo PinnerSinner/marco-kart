@@ -1,0 +1,24 @@
+{
+  "name": "marco-kart",
+  "version": "0.1.0",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "three": "^0.186.1"
+  },
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "node-web-audio-api": "^2.2.0"
+  }
+}

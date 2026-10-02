@@ -1,0 +1,185 @@
+{
+ "files": {
+  "art_bighead_desk_point": {
+   "bytes": 37842,
+   "file": "art_bighead_desk_point.jpg",
+   "h": 512,
+   "w": 512
+  },
+  "art_bighead_flag_rio": {
+   "bytes": 34029,
+   "file": "art_bighead_flag_rio.jpg",
+   "h": 512,
+   "w": 512
+  },
+  "art_card_desk_point": {
+   "bytes": 35610,
+   "file": "art_card_desk_point.jpg",
+   "h": 544,
+   "w": 384
+  },
+  "art_card_snake_chair": {
+   "bytes": 33599,
+   "file": "art_card_snake_chair.jpg",
+   "h": 544,
+   "w": 384
+  },
+  "art_constructivist_desk_point": {
+   "bytes": 41253,
+   "file": "art_constructivist_desk_point.jpg",
+   "h": 640,
+   "w": 512
+  },
+  "art_head_desk_point": {
+   "bytes": 9136,
+   "file": "art_head_desk_point.jpg",
+   "h": 256,
+   "w": 256
+  },
+  "art_head_flag_rio": {
+   "bytes": 9421,
+   "file": "art_head_flag_rio.jpg",
+   "h": 256,
+   "w": 256
+  },
+  "art_head_marco_face": {
+   "bytes": 10332,
+   "file": "art_head_marco_face.jpg",
+   "h": 256,
+   "w": 256
+  },
+  "art_head_stonehenge": {
+   "bytes": 11028,
+   "file": "art_head_stonehenge.jpg",
+   "h": 256,
+   "w": 256
+  },
+  "art_mascot_desk_point": {
+   "bytes": 13061,
+   "file": "art_mascot_desk_point.png",
+   "h": 512,
+   "w": 512
+  },
+  "art_mural_blighty": {
+   "bytes": 49537,
+   "file": "art_mural_blighty.jpg",
+   "h": 320,
+   "w": 768
+  },
+  "art_mural_rio": {
+   "bytes": 45628,
+   "file": "art_mural_rio.jpg",
+   "h": 320,
+   "w": 768
+  },
+  "art_paint_flag_rio": {
+   "bytes": 24030,
+   "file": "art_paint_flag_rio.png",
+   "h": 512,
+   "w": 512
+  },
+  "art_popart_keffiyeh_car": {
+   "bytes": 60404,
+   "file": "art_popart_keffiyeh_car.jpg",
+   "h": 512,
+   "w": 512
+  },
+  "art_riso_stonehenge": {
+   "bytes": 39720,
+   "file": "art_riso_stonehenge.jpg",
+   "h": 512,
+   "w": 512
+  },
+  "art_stamp_stonehenge": {
+   "bytes": 13319,
+   "file": "art_stamp_stonehenge.png",
+   "h": 384,
+   "w": 320
+  },
+  "art_stencil_flag_rio": {
+   "bytes": 26158,
+   "file": "art_stencil_flag_rio.jpg",
+   "h": 320,
+   "w": 640
+  },
+  "art_stencil_stonehenge": {
+   "bytes": 37033,
+   "file": "art_stencil_stonehenge.jpg",
+   "h": 320,
+   "w": 640
+  },
+  "art_stencil_vatican": {
+   "bytes": 38945,
+   "file": "art_stencil_vatican.jpg",
+   "h": 320,
+   "w": 640
+  },
+  "art_sticker_couch": {
+   "bytes": 11887,
+   "file": "art_sticker_couch.png",
+   "h": 320,
+   "w": 320
+  },
+  "art_sticker_desk_point": {
+   "bytes": 10845,
+   "file": "art_sticker_desk_point.png",
+   "h": 320,
+   "w": 320
+  },
+  "art_sticker_sugarloaf": {
+   "bytes": 10498,
+   "file": "art_sticker_sugarloaf.png",
+   "h": 320,
+   "w": 320
+  },
+  "art_sticker_yoda": {
+   "bytes": 8859,
+   "file": "art_sticker_yoda.png",
+   "h": 320,
+   "w": 320
+  },
+  "art_synth_desert_drive": {
+   "bytes": 38302,
+   "file": "art_synth_desert_drive.jpg",
+   "h": 360,
+   "w": 640
+  },
+  "art_synth_snake_chair": {
+   "bytes": 37615,
+   "file": "art_synth_snake_chair.jpg",
+   "h": 360,
+   "w": 640
+  },
+  "art_tarot_yoda": {
+   "bytes": 31143,
+   "file": "art_tarot_yoda.jpg",
+   "h": 576,
+   "w": 352
+  },
+  "art_tile_couch": {
+   "bytes": 14224,
+   "file": "art_tile_couch.jpg",
+   "h": 256,
+   "w": 256
+  },
+  "art_toon_yoda": {
+   "bytes": 35076,
+   "file": "art_toon_yoda.jpg",
+   "h": 512,
+   "w": 512
+  },
+  "art_wanted_banana_run": {
+   "bytes": 48062,
+   "file": "art_wanted_banana_run.jpg",
+   "h": 640,
+   "w": 512
+  },
+  "art_wanted_squish": {
+   "bytes": 48371,
+   "file": "art_wanted_squish.jpg",
+   "h": 640,
+   "w": 512
+  }
+ },
+ "note": "files written by tools/caricature_build.py (other art_* files are yours and never touched)"
+}
