@@ -8,7 +8,7 @@ Built with **Three.js**, shipped as **one self-contained HTML file** (no server,
 
 ## Play it
 
-**Live:** https://pinnersinner.github.io/marco-kart/ (once Pages is enabled, see [Deploying](#deploying)).
+**Live:** https://kart.marcoverse.co.uk (also https://pinnersinner.github.io/marco-kart/). See [Deploying](#deploying) for setup.
 
 Or run it locally:
 
