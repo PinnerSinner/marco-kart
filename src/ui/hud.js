@@ -14,6 +14,9 @@ import {
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs) => { const e = document.createElementNS(SVGNS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
 
+/** Minimap drawing sizes in its 100-unit view box: three stacked strokes make the road (dark edge, white kerb, grey tarmac), then the dots. */
+const MM = Object.freeze({ outer: 12, edge: 9, road: 6, start: 3.6, pad: 12, me: 7.4, other: 5.2 });
+
 const BANNER_ICON = { final: 'flag', wrong: 'up', best: 'timer', good: 'check', bad: 'bolt', lap: 'flag', info: '' };
 const COUNT_COLOURS = { 3: '#FF4A5A', 2: '#FFB020', 1: '#FFE066', 0: '#5CFF8A' };
 
@@ -54,24 +57,24 @@ export class Hud {
     e.itemSlot = this.itemHud.build();
     e.timeVal = h('div.tv', { text: '0:00.000' });
     e.laps = h('div.laps');
-    e.timer = h('div.panel.timer', null, h('div.lbl', { text: 'TIME' }), e.timeVal, e.laps);
-    e.tl = h('div.hud-tl', null, e.itemSlot, e.timer);
-    // ---- standings
+    e.timer = h('div.panel.timer', null, h('div.lbl', { text: 'TIME' }), e.timeVal, e.laps);   // sits under the minimap, top right
+    // ---- standings (below the item box and its caption, in the same column)
     e.standings = h('div.standings');
+    e.tl = h('div.hud-tl', null, e.itemSlot, e.standings);
     // ---- minimap + pause
     e.mmSvg = svgEl('svg', { viewBox: '0 0 100 100' });
     e.mmRoad = [
-      svgEl('path', { fill: 'none', stroke: '#06122A', 'stroke-width': 9, 'stroke-linejoin': 'round' }),
-      svgEl('path', { fill: 'none', stroke: '#FFF8EC', 'stroke-width': 6.4, 'stroke-linejoin': 'round' }),
-      svgEl('path', { fill: 'none', stroke: '#3B4A6B', 'stroke-width': 4.2, 'stroke-linejoin': 'round' }),
+      svgEl('path', { fill: 'none', stroke: '#06122A', 'stroke-width': MM.outer, 'stroke-linejoin': 'round' }),
+      svgEl('path', { fill: 'none', stroke: '#FFF8EC', 'stroke-width': MM.edge, 'stroke-linejoin': 'round' }),
+      svgEl('path', { fill: 'none', stroke: '#3B4A6B', 'stroke-width': MM.road, 'stroke-linejoin': 'round' }),
     ];
-    e.mmStart = svgEl('line', { stroke: '#FFD166', 'stroke-width': 2.6, 'stroke-linecap': 'round' });
+    e.mmStart = svgEl('line', { stroke: '#FFD166', 'stroke-width': MM.start, 'stroke-linecap': 'round' });
     e.mmOthers = svgEl('g', {});
     e.mmMe = svgEl('g', {});
     e.mmSvg.append(...e.mmRoad, e.mmStart, e.mmOthers, e.mmMe);
     e.minimap = h('div.minimap', null, e.mmSvg);
     e.pauseBtn = h('button.pause-btn', { attrs: { 'aria-label': 'Pause', type: 'button' }, data: { sfx: 'ui-click' }, on: { click: () => this.ctx.onPause?.() } }, h('i', null, h('b'), h('b')));
-    e.tr = h('div.hud-tr', null, e.pauseBtn, e.minimap);
+    e.tr = h('div.hud-tr', null, h('div.mm-row', null, e.pauseBtn, e.minimap), e.timer);
     // ---- lap + speedo
     e.lapNum = h('b', { text: '1' });
     e.lapTot = h('em', { text: '/3' });
@@ -106,7 +109,7 @@ export class Hud {
     e.boostBar = h('i');
     e.boost = h('div.boost', null, fromHtml(glyph('flame')), h('div.boost-bar', null, e.boostBar));
     e.bc = h('div.hud-bc', null, e.boost, e.drift);
-    e.hud.append(e.tl, e.standings, e.tr, e.bl, e.br, e.bc);
+    e.hud.append(e.tl, e.tr, e.bl, e.br, e.bc);
     // ---- fx layer
     e.count = h('div.count');
     e.banners = h('div.banners');
@@ -373,7 +376,7 @@ export class Hud {
     if (!mm) return;
     if (mm.outline !== this._outline) {
       this._outline = mm.outline;
-      this._fit = fitMinimap(mm.outline);
+      this._fit = fitMinimap(mm.outline, 100, MM.pad);
       for (const p of e.mmRoad) p.setAttribute('d', this._fit.path);
       const st = this._fit.start;
       if (st) { e.mmStart.setAttribute('x1', st.x1.toFixed(1)); e.mmStart.setAttribute('y1', st.y1.toFixed(1)); e.mmStart.setAttribute('x2', st.x2.toFixed(1)); e.mmStart.setAttribute('y2', st.y2.toFixed(1)); }
@@ -384,9 +387,9 @@ export class Hud {
       const k = mm.karts[i];
       let d = this.dots.get(k.id);
       if (!d) {
-        const c = svgEl('circle', { r: k.isPlayer ? 4.6 : 3.4, class: k.isPlayer ? 'mm-dot mm-me' : 'mm-dot', fill: hex(k.colour ?? 0xffffff) });
+        const c = svgEl('circle', { r: k.isPlayer ? MM.me : MM.other, class: k.isPlayer ? 'mm-dot mm-me' : 'mm-dot', fill: hex(k.colour ?? 0xffffff) });
         d = { c, ring: null };
-        if (k.isPlayer) { d.ring = svgEl('circle', { r: 4.6, class: 'mm-ring' }); e.mmMe.append(d.ring, c); } else e.mmOthers.append(c);
+        if (k.isPlayer) { d.ring = svgEl('circle', { r: MM.me, class: 'mm-ring' }); e.mmMe.append(d.ring, c); } else e.mmOthers.append(c);
         this.dots.set(k.id, d);
       }
       this._fit.project(k.x, k.z, pt);

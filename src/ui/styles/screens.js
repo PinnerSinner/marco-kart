@@ -69,24 +69,41 @@ const introCss = () => `
 .brand-logo{height:74u;width:auto;align-self:flex-start;object-fit:contain;filter:drop-shadow(0 3u 0 rgba(0,0,0,.4))}
 
 /* ---------- main menu ---------- */
-.menu-logo{position:absolute;top:calc(max(env(safe-area-inset-top),14u));left:max(34u,3vw);width:min(200u,26vw)}
-.menu-body{gap:44u;align-items:center;padding-top:44u}
-.menu-list{display:flex;flex-direction:column;gap:12u;width:min(300u,42vw);flex:none;padding-left:8u}
-.menu-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:20u;justify-content:center;max-width:420u}
-.menu-info{min-height:150u}
-.info-t{font-size:28f;line-height:1;text-shadow:${ring(1.6, 'var(--ink)', 2)}}
-.info-p{margin:8u 0 10u;font-size:14f;line-height:1.3;font-weight:700;opacity:.95}
-.info-h{margin:6u 0 4u;font-size:10f;letter-spacing:.2em;font-weight:900;color:var(--cyan)}
-.info-row{display:flex;justify-content:space-between;gap:12u;padding:3u 0;font-size:12f;border-top:2u solid rgba(255,248,236,.14)}
-.info-row .tv{font-variant-numeric:tabular-nums;color:var(--yellow)}
-.hero-card{display:flex;align-items:center;gap:16u}
-.hero-pt{width:76u;flex:none}
-.hero-pt .pt{border-radius:50%;border:4u solid var(--paper);box-shadow:0 5u 0 var(--ink)}
-.hero-n{font-size:24f;line-height:1;text-shadow:${ring(1.6, 'var(--ink)', 2)}}
-.hero-t{margin:3u 0 6u;font-size:12f;opacity:.85}
-@media (max-height:460px){
-  .menu-logo{display:none}.menu-body{padding-top:0}.menu-list{display:grid;grid-template-columns:1fr 1fr;gap:10u;width:min(560u,64vw)}.menu-side{display:none}
-  .btn{min-height:40u}
+/* Three columns inside the shared content cap: logo + buttons | mode card + racer | photo. Everything is sized in design units, which follow the
+   viewport height, so the buttons always fit; wide screens widen the centre column (up to the cap) and centre the whole block. */
+.screen[data-screen="menu"]{padding-bottom:max(env(safe-area-inset-bottom),56u)}
+.menu-body{display:grid;grid-template-columns:minmax(0,300u) minmax(0,1fr) minmax(0,220u);grid-template-rows:minmax(0,1fr);gap:26u;align-items:stretch}
+.menu-body.no-photo{grid-template-columns:minmax(0,300u) minmax(0,1fr)}
+.menu-left{display:flex;flex-direction:column;gap:12u;min-height:0;padding-left:8u}
+.menu-logo{flex:none;width:min(210u,100%);align-self:center}
+.menu-list{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:11u}
+.menu-list .btn{flex:0 1 50u;min-height:0;max-height:50u;padding-top:2u;padding-bottom:2u}
+.menu-mid{min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:22u;padding:6u 0 10u}
+.menu-info{flex:0 1 auto;min-height:min(236u,100%);display:flex;flex-direction:column;padding:16u 22u 14u}
+.info-t{flex:none;font-size:30f;line-height:1;text-shadow:${ring(1.6, 'var(--ink)', 2)}}
+.info-p{flex:none;margin:9u 0 12u;font-size:14f;line-height:1.35;font-weight:700;opacity:.95}
+.info-h{flex:none;margin:2u 0 5u;font-size:10.5f;letter-spacing:.2em;font-weight:900;color:var(--cyan)}
+.info-rows{min-height:0;overflow-y:auto;scrollbar-width:thin}
+.info-row{display:flex;justify-content:space-between;gap:14u;padding:5u 0;font-size:13f;border-top:2u solid rgba(255,248,236,.14)}
+.info-row .tv{flex:none;font-variant-numeric:tabular-nums;color:var(--yellow)}
+.menu-racer{flex:none;display:flex;align-items:center;gap:16u;padding:12u 20u}
+.mr-pt{flex:none;width:76u}
+.mr-pt .pt{border-radius:50%;border:4u solid var(--paper);box-shadow:0 5u 0 var(--ink)}
+.mr-text{min-width:0}
+.mr-n{font-size:25f;line-height:1;text-shadow:${ring(1.6, 'var(--ink)', 2)}}
+.mr-t{margin:4u 0 7u;font-size:12.5f;opacity:.88}
+.menu-photo{min-width:0;min-height:0;display:grid;place-items:center;padding:8u 6u 14u}
+.mh-photo{position:relative;width:100%;max-height:100%;aspect-ratio:3/4;border-radius:14u;border:5u solid var(--paper);box-shadow:0 8u 0 var(--ink),0 14u 28u rgba(0,0,0,.4);transform:rotate(2.5deg);overflow:hidden;background:radial-gradient(circle at 50% 40%,#3a2f6b,#16143a)}
+@media (min-aspect-ratio:2/1){
+  .menu-body{grid-template-columns:minmax(0,340u) minmax(0,1fr) minmax(0,330u);gap:34u}
+  .menu-body.no-photo{grid-template-columns:minmax(0,340u) minmax(0,1fr)}
+  .menu-logo{width:min(250u,100%)}
+  .menu-list .btn{flex-basis:54u;max-height:54u}
+  .info-t{font-size:34f}.info-p{font-size:15f}.info-row{font-size:14f}
+}
+@media (max-aspect-ratio:1/1){
+  .menu-body,.menu-body.no-photo{grid-template-columns:minmax(0,300u) minmax(0,1fr)}
+  .menu-photo{display:none}
 }
 `;
 

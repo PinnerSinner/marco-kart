@@ -10,7 +10,6 @@ import { logoSvg, unionFlag, waveTileUrl } from '../src/ui/motifs.js';
 import { charName } from '../src/ui/chars.js';
 import { TIPS, shuffledTips, DIFFICULTY_COPY } from '../src/ui/copy.js';
 import { fitMinimap } from '../src/ui/minimap.js';
-import { splitBindings } from '../src/ui/screens/controls.js';
 import { pickDirectional } from '../src/ui/nav.js';
 import { units, ring } from '../src/ui/styles/util.js';
 import { buildCss } from '../src/ui/styles/index.js';
@@ -91,19 +90,6 @@ test('minimap fit: maps into the box, mirrored so right is right, and survives j
   assert.equal(empty.path, '');
   assert.deepEqual(empty.project(5, 5, { x: 0, y: 0 }), { x: 50, y: 50 });
   assert.ok(fitMinimap([[0, 0], [NaN, 4], [5, 5], [9, 1]]).path.length > 0);
-});
-
-test('controls: bindings split into keyboard and gamepad columns', () => {
-  const a = splitBindings('Accelerate', ['W', 'Up', 'RT', 'A']);
-  assert.deepEqual(a.keyboard, ['W', '↑']);
-  assert.deepEqual(a.pad, ['RT', 'A']);
-  const s = splitBindings('Steer', ['A', 'D', 'Left', 'Right', 'Left stick', 'D-pad']);
-  assert.deepEqual(s.keyboard, ['A', 'D', '←', '→']);
-  assert.deepEqual(s.pad, ['Left stick', 'D-pad']);
-  const c = splitBindings('Use item', ['E / Enter / Z', 'X or LB']);
-  assert.deepEqual(c.keyboard, ['E', 'Enter', 'Z']);
-  assert.deepEqual(c.pad, ['X', 'LB']);
-  assert.deepEqual(splitBindings('Nothing', undefined), { keyboard: [], pad: [] });
 });
 
 test('nav: directional focus picks the nearest element in the beam', () => {

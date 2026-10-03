@@ -1,4 +1,4 @@
-// Marco's caricature art in the 2D UI: collage backdrops behind the menu, loading, character select, item guide and podium screens, the pause
+// Marco's caricature art in the 2D UI: collage backdrops behind the loading and results screens, the pause
 // menu corner, and the small badge on the HUD portrait. The pictures are comic-style art made from his own photos (tools/caricature_build.py)
 // plus anything dropped into assets/user/ as art_<name>.png|jpg. It is "caricature art": never "AI art".
 // Every helper returns null when no art is present (or the player turned 'Caricature art' off), so screens simply skip the extra.
@@ -102,7 +102,6 @@ export function caricatureWall(seed = 0, { cols = 5, rows = 3, A = Assets, entri
 
 /** Anchor slots (percent of the screen, size in design units, tilt) for scattered pieces, per layout: kept clear of the logo, headers and panels. */
 const SLOT_SETS = {
-  menu: [[56, 2, 150, 6], [80, 1, 170, -8], [91, 38, 130, 7], [72, 76, 170, -5], [44, 78, 140, 6], [88, 68, 150, 8], [30, 50, 110, -7], [60, 24, 110, 5]],
   podium: [[1, 76, 150, -7], [15, 80, 170, 6], [32, 84, 140, -5], [50, 84, 160, 8], [68, 80, 150, -6], [84, 82, 170, 7], [93, 62, 120, 5], [0, 54, 110, -8]],
   any: [[3, 8, 150, -9], [84, 5, 170, 7], [90, 46, 140, -6], [1, 52, 130, 8], [70, 74, 190, -5], [10, 76, 170, 6], [44, 2, 120, -4], [50, 80, 140, 5], [24, 36, 120, 9], [76, 30, 120, -8], [33, 64, 110, -7], [60, 14, 110, 6]],
 };
@@ -159,7 +158,7 @@ export function caricatureBadge({ A = Assets, entries, seed = 0 } = {}) {
 
 /** Which collage each screen gets: screen name -> layout id. Screens not listed get none. */
 // "Less slop": the select screens and the Item Guide are for reading, so they have no wall behind them any more.
-export const COLLAGE_LAYOUTS = { menu: 'menu', loading: 'loading', podium: 'podium', standings: 'podium', results: 'podium' };
+export const COLLAGE_LAYOUTS = { loading: 'loading', podium: 'podium', standings: 'podium', results: 'podium' };
 
 /** @returns {string|null} layout id for a screen name */
 export const layoutFor = (screen) => COLLAGE_LAYOUTS[screen] ?? null;
@@ -167,7 +166,6 @@ export const layoutFor = (screen) => COLLAGE_LAYOUTS[screen] ?? null;
 function buildLayout(id, A, entries) {
   const seed = hashStr(id) % 97;
   switch (id) {
-    case 'menu': return caricatureScatter(seed, { count: 7, A, entries, slots: 'menu' });
     case 'podium': return caricatureScatter(seed + 2, { count: 7, A, entries, kind: 'stickers', slots: 'podium' });
     case 'loading': return caricatureWall(seed, { cols: 5, rows: 3, A, entries });
     case 'select': return caricatureWall(seed + 4, { cols: 6, rows: 3, A, entries });

@@ -1,6 +1,7 @@
 // The HUD item box: TWO item slots (slot 1 large = the front item fired by the use button, slot 2 smaller = queued, swapped in with the
-// swap button or a tap), a roulette that shows "???" until it lands, and a pop-up under the box that names the item and says in one
-// sentence what it does (about 3 s on pickup, briefly again when the front item changes after a swap or a use).
+// swap button or a tap), a roulette that shows "???" until it lands, and a caption under the box that names the front item and says in one
+// sentence what it does for as long as it is held (nothing, and no space, when empty), plus a "next: ..." line for the queued item. A
+// short-lived extra line under it says when the slots are full.
 // All copy comes from ITEMS (config.js), so the HUD can never drift from the Item Guide. The decision logic (`popupFor`) is pure and
 // Node-testable; the DOM is only touched inside `build()` and `update()`.
 import { ITEMS, ITEM_CATEGORIES } from '../core/config.js';
@@ -64,13 +65,12 @@ export class ItemHud {
     this._cur = { rolling: false, id1: '', id2: '', refused: 0 };
     this._ttl = 0;
     this._kind = '';
-    this._shown1 = null; this._shown2 = null; this._lastShown = ''; this._prevRoll = '';
+    this._shown1 = null; this._shown2 = null; this._lastShown = ''; this._prevRoll = ''; this._captionKey = null;
     this._ribbon = '';
     this._fullT = 0;
     if (this.e) {
       this._render('', 1); this._render('', 2);
       this.e.pop.classList.remove('on', 'has');
-      this._shift(0);
     }
   }
 
@@ -92,12 +92,14 @@ export class ItemHud {
     e.lock2 = h('span.item-lock', { html: glyph('lock') });
     e.f2 = h('div.item-frame.s2', { attrs: { role: 'button', 'aria-label': 'Swap items' }, on: { pointerdown: (ev) => this._tap(ev) } }, e.ico2, e.count2, e.key2, e.lock2, h('span.item-hit'));
     e.stack = h('div.item-stack', null, e.f2, e.f1);
-    // pop-up under the box: full (name + sentence) while `on`, compact (name, "then ...") at rest
-    e.popList = h('div.ip-list');
+    // caption under the box: the front item's name + sentence and "then ..." while something is held (`has`), plus a short-lived
+    // extra line (`on`) for the queued item or a refused box
     e.restName = h('span.ip-rname');
+    e.restBlurb = h('span.ip-rblurb');
     e.restNext = h('span.ip-rnext');
-    e.rest = h('div.ip-rest', null, e.restName, e.restNext);
-    e.pop = h('div.item-pop', null, e.popList, e.rest);
+    e.rest = h('div.ip-rest', null, e.restName, e.restBlurb, e.restNext);
+    e.popList = h('div.ip-list');
+    e.pop = h('div.item-pop', null, e.rest, e.popList);
     e.root = h('div.item-slot', null, e.stack, e.pop);
     this.setDevice(this.device);
     return e.root;
@@ -164,7 +166,7 @@ export class ItemHud {
     // ---- pop-up timer and the compact line
     if (this._ttl > 0 && this._ttl !== Infinity) {
       this._ttl -= dt;
-      if (this._ttl <= 0) { this._ttl = 0; this._kind = ''; e.pop.classList.remove('on'); this._shift(0); }
+      if (this._ttl <= 0) { this._ttl = 0; this._kind = ''; e.pop.classList.remove('on'); }
     }
     this._compact(cur, s.swapLocked);
     if (this._fullT > 0) { this._fullT -= dt; if (this._fullT <= 0) { setClass(e.f1, 'full', false); setClass(e.f2, 'full', false); } }
@@ -188,55 +190,45 @@ export class ItemHud {
     else anim(ico, [{ transform: 'scale(1.7) rotate(-14deg)' }, { transform: 'scale(.9) rotate(3deg)', offset: 0.6 }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.9,.3,1)', fill: 'none' });
   }
 
-  /** Show a pop-up for a state change (see `popupFor`). */
+  /** React to a state change (see `popupFor`): flash the "SLOTS FULL" line, or pop the caption line of the item that just arrived. */
   _pop(ev) {
     const e = this.e;
-    if (ev.kind === 'clear') { this._ttl = 0; this._kind = ''; e.pop.classList.remove('on'); this._shift(0); return; }
+    if (ev.kind === 'clear') { this._ttl = 0; this._kind = ''; e.pop.classList.remove('on'); return; }
+    if (ev.kind === 'rolling') { e.pop.classList.remove('on'); this._kind = 'rolling'; this._ttl = Infinity; return; }
     if (ev.kind === 'full') {
       this._fullT = POP_SECONDS.full;
       setClass(e.f1, 'full', true); setClass(e.f2, 'full', true);
-      this._entries([{ name: 'SLOTS FULL', blurb: 'Use or swap an item to pick up more.', tag: '', category: '' }]);
-    } else if (ev.kind === 'rolling') {
-      e.pop.classList.remove('on'); this._shift(0); this._kind = 'rolling'; this._ttl = Infinity; return;
+      this._entries([{ name: 'SLOTS FULL', blurb: 'Use or swap an item first.' }]);
+      e.pop.classList.add('on');
     } else {
-      // slot 1 gets the full caption (name + one sentence); the item waiting in slot 2 gets a smaller one that says how to bring it forward
-      const swapKey = SLOT_KEYS[this.device].swap;
-      this._entries(ev.ids.map((id, i) => {
-        const c = itemCopy(id);
-        const sub = ev.slots[i] === 2;
-        const tag = sub ? (swapKey === 'TAP' ? 'NEXT UP: TAP TO SWAP' : `NEXT UP: ${swapKey} TO SWAP`) : '';
-        return { name: c.name, blurb: c.blurb, tag, category: c.category, sub };
-      }));
+      const target = ev.slots.includes(1) ? e.rest : e.restNext;
+      anim(target, [{ transform: 'scale(1.18)', opacity: 0.4 }, { transform: 'none', opacity: 1 }], { duration: 260, easing: 'cubic-bezier(.2,1.2,.3,1)', fill: 'none' });
     }
     this._kind = ev.kind;
     this._ttl = ev.seconds;
-    e.pop.classList.add('on');
-    this._shift(0);
-  }
-
-  /** Slides the standings list down (design units) while a pop-up is showing, so the caption never sits on top of the driver names. */
-  _shift(units) {
-    const hud = this._hud ?? (this._hud = this.e.root.closest ? this.e.root.closest('.hud') : null);
-    if (hud && units !== this._shifted) { this._shifted = units; hud.style.setProperty('--pop-shift', units ? `calc(var(--u) * ${units})` : '0px'); }
   }
 
   _entries(list) {
     const box = this.e.popList;
-    box.replaceChildren(...list.map((it) => h('div.ip-entry' + (it.category ? `.cat-${it.category}` : '') + (it.sub ? '.sub' : ''), null,
-      it.tag ? h('div.ip-tag', { text: it.tag }) : null,
-      h('div.ip-head', null, h('span.ip-name', { text: it.name })),
-      h('div.ip-blurb', { text: it.blurb }))));
+    box.replaceChildren(...list.map((it) => h('div.ip-entry', null, h('div.ip-name', { text: it.name }), h('div.ip-blurb', { text: it.blurb }))));
     anim(box, [{ transform: 'translateY(-8px) scale(.94)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 220, easing: 'cubic-bezier(.2,1.2,.3,1)', fill: 'none' });
   }
 
-  /** Compact, always-on label at rest: the front item's name, and "then ..." for the queued one. */
+  /** The always-on caption while something is held: the front item's name and sentence, and "next: ..." for the queued one. */
   _compact(cur, locked) {
     const e = this.e;
-    const n1 = cur.rolling ? '???' : cur.id1 ? itemCopy(cur.id1).name : '';
-    const n2 = cur.id2 && !cur.rolling ? `then ${itemCopy(cur.id2).name}` : '';
-    setText(e.restName, n1);
-    setText(e.restNext, n2);
-    setClass(e.pop, 'has', !!(n1 || n2));
+    const c1 = cur.id1 && !cur.rolling ? itemCopy(cur.id1) : null;
+    const n1 = cur.rolling ? '???' : c1 ? c1.name : '';
+    const n2 = cur.id2 && !cur.rolling ? `next: ${itemCopy(cur.id2).name}` : '';
+    const key = `${n1}|${c1 ? c1.blurb : ''}|${n2}`;
+    if (key !== this._captionKey) {
+      this._captionKey = key;
+      setText(e.restName, n1);
+      setText(e.restBlurb, c1 ? c1.blurb : '');
+      setText(e.restNext, n2);
+      e.rest.className = `ip-rest${c1 && c1.category ? ` cat-${c1.category}` : ''}`;
+      setClass(e.pop, 'has', !!(n1 || n2));
+    }
     setClass(e.restNext, 'locked', !!locked && !!n2);
   }
 

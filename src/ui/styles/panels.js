@@ -1,4 +1,4 @@
-// Styles for settings, controls, about and the pause menu.
+// Styles for settings, about and the pause menu.
 import { ring } from './util.js';
 
 export const panelsCss = () => `
@@ -6,25 +6,10 @@ export const panelsCss = () => `
 .set-h{margin-bottom:8u;font-size:10.5f;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
 
 /* settings */
-.set-body{gap:26u;align-items:flex-start;min-height:0}
-.set-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:6u}
-.set-col .row{min-height:39u;padding-top:3u;padding-bottom:3u}
+.set-body{gap:26u;align-items:flex-start;min-height:0;padding:4u 6u 8u;overflow-y:auto;scrollbar-width:thin}
+.set-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:5u}
+.set-col .row{min-height:34u;padding-top:2u;padding-bottom:2u}
 .seg button.is-focus{outline:0}
-
-/* controls */
-.ctl-body{gap:20u;min-height:0}
-.ctl-table{flex:1.5;min-width:0;align-self:flex-start;display:flex;flex-direction:column;gap:3u;padding:12u 20u}
-.ctl-row{display:grid;grid-template-columns:1.1fr 1.4fr 1.2fr;gap:10u;align-items:center;padding:6u 0;border-bottom:2u solid rgba(255,248,236,.14)}
-.ctl-row:last-child{border-bottom:0}
-.ctl-row.head{padding:0 0 5u;font-size:10f;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);border-bottom:3u solid rgba(255,248,236,.3)}
-.ctl-a{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:14f;text-transform:uppercase}
-.ctl-k{display:flex;flex-wrap:wrap;gap:6u}
-.ctl-k .key{min-width:24u;height:24u;font-size:11f}
-.ctl-side{flex:1;min-width:0;display:flex;flex-direction:column;gap:16u;align-self:flex-start}
-.ctl-pad .pad-art{width:100%;max-width:220u;margin:0 auto 10u}
-.pad-legend{display:flex;flex-direction:column;gap:6u;font-size:11.5f;font-weight:800}
-.pad-legend span{display:flex;align-items:center;gap:8u}
-.ctl-touch p{margin:0;font-size:12f;line-height:1.35;font-weight:700;opacity:.95}
 
 /* about */
 .ab-body{gap:26u;min-height:0;align-items:flex-start}
@@ -85,16 +70,15 @@ a.btn{text-decoration:none}
 .pause-vol .row{padding:4u 12u;min-height:38u}
 .pause-vol .row-l{flex:0 0 42%;font-size:12f}
 .pause-vol .row-l .glyph{display:none}
-.pause-ctl{width:min(660u,100%);display:flex;flex-direction:column}
-.pause-ctl .ctl-table{width:100%}
 .pause-confirm{width:min(460u,100%);text-align:center;display:flex;flex-direction:column;gap:8u;padding:18u 24u}
 .pause-ct{font-size:24f;line-height:1;text-shadow:${ring(1.4, 'var(--ink)', 2)}}
 .pause-confirm p{margin:0 0 6u;font-size:13f;line-height:1.35;font-weight:700}
 .pause-yn{display:flex;gap:14u}
 .pause-yn .btn{flex:1}
 @media (max-height:460px){
+  .set-note{display:none}
   .ab-strip,.polaroid.stamp{display:none}
   .pause-in{gap:10u}.pause-title{font-size:30f}.pause-list{gap:8u}.pause .btn{min-height:36u;font-size:15f}
-  .ctl-row{padding:3u 0}.ctl-side{display:none}.ab-text p:nth-of-type(3){display:none}.ab-quirks{display:none}
+  .ab-text p:nth-of-type(3){display:none}.ab-quirks{display:none}
 }
 `;

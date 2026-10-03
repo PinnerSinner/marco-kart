@@ -21,7 +21,6 @@ import { CharScreen, KartScreen, DifficultyScreen, TrackScreen } from './screens
 import { SelectFlow } from './flow.js';
 import { Turntable } from './turntable.js';
 import { SettingsScreen } from './screens/settings.js';
-import { ControlsScreen } from './screens/controls.js';
 import { ItemGuideScreen } from './screens/items.js';
 import { AboutScreen } from './screens/about.js';
 import { ResultsScreen, StandingsScreen, PodiumScreen } from './screens/results.js';
@@ -33,15 +32,8 @@ import { speedClassInfo } from '../core/speedClass.js';
 
 const STYLE_ID = 'mk-ui-style';
 /** Screens that get the diagonal wipe when moving between each other. */
-const WIPES = new Set(['title', 'menu', 'char', 'kart', 'difficulty', 'track', 'controls', 'items', 'settings', 'about']);
+const WIPES = new Set(['title', 'menu', 'char', 'kart', 'difficulty', 'track', 'items', 'settings', 'about']);
 const RESULT_SCREENS = new Set(['results', 'standings', 'podium']);
-
-const HINTS = {
-  move: [['↑↓←→']],
-  enter: [['Enter'], ['A', 'a']],
-  back: [['Esc'], ['B', 'b']],
-  adjust: [['←→']],
-};
 
 export class UI {
   /**
@@ -100,7 +92,7 @@ export class UI {
       h('div.rotate-hint', null, h('div.phone'), h('div.disp', { text: 'Turn your phone sideways' }), h('div.muted', { text: 'Marco Kart is a landscape game.' })));
     rootEl.append(this.root);
 
-    const S = { loading: LoadingScreen, title: TitleScreen, menu: MenuScreen, char: CharScreen, kart: KartScreen, difficulty: DifficultyScreen, track: TrackScreen, settings: SettingsScreen, controls: ControlsScreen, items: ItemGuideScreen, about: AboutScreen, results: ResultsScreen, standings: StandingsScreen, podium: PodiumScreen };
+    const S = { loading: LoadingScreen, title: TitleScreen, menu: MenuScreen, char: CharScreen, kart: KartScreen, difficulty: DifficultyScreen, track: TrackScreen, settings: SettingsScreen, items: ItemGuideScreen, about: AboutScreen, results: ResultsScreen, standings: StandingsScreen, podium: PodiumScreen };
     for (const [name, Cls] of Object.entries(S)) this._register(new Cls(this));
     this.pause = new PauseMenu(this);
     this.overlay.append(this.pause.el);
@@ -159,20 +151,6 @@ export class UI {
    */
   sfx(name, extra) {
     this.emit('sfx', { name, ...extra });
-  }
-
-  /**
-   * Control-hint row: keyboard key plus gamepad button for each action.
-   * @param {[string, string][]} pairs [hintKind, label]
-   * @returns {HTMLElement}
-   */
-  hintBar(pairs) {
-    const el = h('div.hints');
-    for (const [kind, label] of pairs) {
-      const keys = HINTS[kind] ?? [[kind]];
-      el.append(h('span.hint', null, ...keys.map(([k, pad]) => h(pad ? `kbd.key.pad.${pad}` : 'kbd.key', { text: k })), h('span', { text: label })));
-    }
-    return el;
   }
 
   /**

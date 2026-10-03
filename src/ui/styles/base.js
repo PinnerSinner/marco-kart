@@ -54,6 +54,8 @@ export const baseCss = () => `
 .screen{position:absolute;inset:0;display:none;flex-direction:column;pointer-events:auto;
   padding:max(env(safe-area-inset-top),18u) max(env(safe-area-inset-right),34u) max(env(safe-area-inset-bottom),34u) max(env(safe-area-inset-left),34u)}
 .screen.is-active{display:flex}
+/* wide windows: header, body and footer share one centred column instead of stretching edge to edge */
+.screen>.hdr,.screen>.screen-body,.screen>.ftr{width:100%;max-width:1240u;margin-left:auto;margin-right:auto}
 .screen-body{flex:1 1 auto;min-height:0;display:flex;position:relative}
 .grow{flex:1 1 auto;min-width:0;min-height:0}
 
@@ -123,7 +125,7 @@ export const baseCss = () => `
 .btn[disabled],.btn.is-disabled{filter:grayscale(.8) brightness(.7);pointer-events:none}
 .btn.is-focus::after{overflow:hidden}
 
-/* ---------- headings, steps, hints ---------- */
+/* ---------- headings, steps ---------- */
 .hdr{display:flex;align-items:center;justify-content:space-between;gap:16u;flex:none;margin-bottom:12u}
 .hdr-l{display:flex;align-items:center;gap:14u;min-width:0}
 .hdr-title{position:relative;isolation:isolate;padding:6u 34u 6u 20u;font-family:var(--font-display);font-style:italic;font-weight:900;font-size:27f;line-height:1;
@@ -143,8 +145,6 @@ export const baseCss = () => `
 .step.done::before{background:var(--cyan);border-color:var(--ink)}
 .step.done b{background:var(--ink);color:var(--cyan)}
 .ftr{display:flex;align-items:center;justify-content:space-between;gap:14u;flex:none;margin-top:10u}
-.hints{display:flex;gap:16u;align-items:center;flex-wrap:wrap;font-size:11f;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.92}
-.hint{display:flex;gap:6u;align-items:center}
 .key{display:inline-grid;place-items:center;min-width:20u;height:20u;padding:0 6u;border-radius:5u;background:var(--paper);color:var(--ink);
   font-family:var(--font-display);font-style:normal;font-size:10f;font-weight:900;border:2u solid var(--ink);box-shadow:0 3u 0 var(--ink);letter-spacing:0;text-transform:none}
 .key.pad{border-radius:50%;min-width:20u;padding:0;background:var(--cyan)}

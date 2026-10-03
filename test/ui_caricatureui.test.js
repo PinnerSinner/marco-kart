@@ -104,7 +104,7 @@ test('collages: wall, scatter, corner and badge build from the art, scale with t
   assert.ok(ui.caricatureWall(1, { cols: 5, rows: 3, amount: 1.5 }).children.length >= ui.caricatureWall(1, { cols: 5, rows: 3, amount: 0.5 }).children.length);
   assert.equal(ui.caricatureWall(1, { amount: 0 }), null);
 
-  for (const slots of ['menu', 'podium', 'any']) {
+  for (const slots of ['podium', 'any']) {
     const sc = ui.caricatureScatter(4, { count: 7, slots });
     assert.ok(sc.classList.contains('cari-scatter') && sc.children.length >= 2 && sc.children.length <= 12, slots);
     for (const c of sc.children) {
@@ -114,12 +114,10 @@ test('collages: wall, scatter, corner and badge build from the art, scale with t
   }
   const stickersOnly = ui.caricatureScatter(0, { count: 6, kind: 'stickers', slots: 'podium' });
   assert.ok(stickersOnly.children.every((c) => c.classList.contains('die')), 'the podium collage is die-cut stickers only');
-  const menu = ui.caricatureScatter(0, { count: 7, slots: 'menu' }), podium = ui.caricatureScatter(0, { count: 7, slots: 'podium' });
-  assert.notDeepEqual(menu.children.map((c) => c.vars['--x'] + c.vars['--y']), podium.children.map((c) => c.vars['--x'] + c.vars['--y']), 'each layout has its own slots');
+  const any = ui.caricatureScatter(0, { count: 7, slots: 'any' }), podium = ui.caricatureScatter(0, { count: 7, slots: 'podium' });
+  assert.notDeepEqual(any.children.map((c) => c.vars['--x'] + c.vars['--y']), podium.children.map((c) => c.vars['--x'] + c.vars['--y']), 'each layout has its own slots');
   const podiumYs = podium.children.map((c) => parseFloat(c.vars['--y']));
   assert.ok(podiumYs.every((y) => y >= 50), 'podium stickers stay in the bottom half, clear of the results header');
-  const menuXY = menu.children.map((c) => [parseFloat(c.vars['--x']), parseFloat(c.vars['--y'])]);
-  assert.ok(menuXY.every(([x, y]) => !(x < 40 && y < 40)), 'menu pieces keep clear of the logo corner');
   assert.equal(ui.caricatureScatter(0, { amount: 0 }), null);
 
   const corner = ui.caricatureCorner(2);
@@ -148,22 +146,23 @@ test('backdrop: layers are built lazily per screen layout, shown by data-screen,
   assert.ok(bd.el.classList.contains('bg-cari'));
   assert.equal(bd.layers.size, 0, 'nothing built until a screen needs it');
   bd.show('title'); assert.equal(bd.layers.size, 0, 'the title screen has no collage');
-  bd.show('menu'); assert.equal(bd.layers.size, 1);
-  bd.show('menu'); assert.equal(bd.layers.size, 1, 'layers are reused');
+  bd.show('menu'); assert.equal(bd.layers.size, 0, 'the main menu has no collage: its photo card is part of the layout');
+  bd.show('loading'); assert.equal(bd.layers.size, 1);
+  bd.show('loading'); assert.equal(bd.layers.size, 1, 'layers are reused');
   bd.show('char'); bd.show('kart'); assert.equal(bd.layers.size, 1, 'the select screens have no collage');
   bd.show('results'); bd.show('podium'); assert.equal(bd.layers.size, 2);
-  const menuLayer = bd.layers.get('menu');
-  assert.equal(menuLayer.dataset.k, 'menu'); assert.match(menuLayer.dataset.for, /\bmenu\b/);
-  assert.ok(menuLayer.children[0]?.classList.contains('cari-scatter'));
+  const loadingLayer = bd.layers.get('loading');
+  assert.equal(loadingLayer.dataset.k, 'loading'); assert.match(loadingLayer.dataset.for, /\bloading\b/);
+  assert.ok(loadingLayer.children[0]?.classList.contains('cari-wall'));
   assert.ok(bd.layers.get('podium').children[0]?.classList.contains('cari-scatter'));
   bd.refresh();
   assert.ok(bd.layers.size >= 1 && bd.layers.get('podium'), 'the screen showing last is rebuilt');
-  assert.equal(withNoArt(() => { const b2 = ui.caricatureBackdrop(); b2.show('menu'); return b2.layers.get('menu').children.length; }), 0, 'an empty layer without art');
+  assert.equal(withNoArt(() => { const b2 = ui.caricatureBackdrop(); b2.show('loading'); return b2.layers.get('loading').children.length; }), 0, 'an empty layer without art');
 });
 
 test('layoutFor / COLLAGE_LAYOUTS: the screens that get a collage, and the ones that do not', () => {
-  for (const s of ['menu', 'loading', 'podium', 'standings', 'results']) assert.ok(ui.layoutFor(s), s);
-  for (const s of ['items', 'char', 'kart', 'difficulty', 'track', 'title', 'settings', 'controls', 'hud', 'pause', 'about', 'nope']) assert.equal(ui.layoutFor(s), null, s);
+  for (const s of ['loading', 'podium', 'standings', 'results']) assert.ok(ui.layoutFor(s), s);
+  for (const s of ['menu', 'items', 'char', 'kart', 'difficulty', 'track', 'title', 'settings', 'hud', 'pause', 'about', 'nope']) assert.equal(ui.layoutFor(s), null, s);
   assert.equal(ui.layoutFor('podium'), ui.layoutFor('results'));
 });
 
@@ -180,7 +179,7 @@ test('caricatureCss: shows each collage on its screens, no NaN, honours reduced 
 
 test('Settings screen: a Caricature art row follows Photo props and uses the same options', () => {
   const calls = [];
-  const fakeUi = { settings: { get: () => ({ volume: { master: 0.8, music: 0.6, sfx: 0.8, voice: 0.9 }, quality: 'medium', cameraShake: 1, touch: false, units: 'kmh', speedClass: 100, speech: true, speechMarco: true, rude: true, blips: false, bubbles: true }), set: (p) => calls.push(p), reset() {} }, hintBar: () => new FakeEl('div'), hud: { setUnits() {} }, sfx() {} };
+  const fakeUi = { settings: { get: () => ({ volume: { master: 0.8, music: 0.6, sfx: 0.8, voice: 0.9 }, quality: 'medium', cameraShake: 1, touch: false, units: 'kmh', speedClass: 100, speech: true, speechMarco: true, rude: true, blips: false, bubbles: true }), set: (p) => calls.push(p), reset() {} }, hud: { setUnits() {} }, sfx() {} };
   const screen = new SettingsScreen(fakeUi);
   screen.el = new FakeEl('section');
   screen.build();

@@ -45,7 +45,6 @@ export function startDemo(initial = 'title') {
     'loading-sweep': () => ui.showLoading('Reticulating splines'),
     title: () => ui.showTitle(),
     menu: () => ui.showMenu(),
-    controls: () => { ui.showMenu(); setTimeout(() => ui.show('controls', { from: 'menu' }), 30); },
     settings: () => { ui.showMenu(); setTimeout(() => ui.show('settings', { from: 'menu' }), 30); },
     about: () => { ui.showMenu(); setTimeout(() => ui.show('about', { from: 'menu' }), 30); },
     items: () => { ui.showMenu(); setTimeout(() => ui.show('items', { from: 'menu' }), 30); },

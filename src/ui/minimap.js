@@ -33,7 +33,7 @@ export function fitMinimap(outline, size = 100, pad = 10) {
   const b = project(pts[1][0], pts[1][1], { x: 0, y: 0 });
   let dx = b.x - a.x; let dy = b.y - a.y;
   const len = Math.hypot(dx, dy) || 1; dx /= len; dy /= len;
-  const r = 4.2;
+  const r = 6.6;
   const start = { x1: a.x - dy * r, y1: a.y + dx * r, x2: a.x + dy * r, y2: a.y - dx * r };
   return { path, project, start };
 }

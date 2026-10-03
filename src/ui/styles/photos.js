@@ -7,7 +7,6 @@ export function photosCss() {
 .photo-wall .pw-cell{transform:rotate(var(--tilt,0deg));animation:pwFloat 9s ease-in-out infinite;animation-delay:var(--dl,0s);background:var(--paper);padding:5u;border-radius:4u;box-shadow:0 4u 10u rgba(0,0,0,.4)}
 .photo-wall img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2u}
 @keyframes pwFloat{0%,100%{transform:rotate(var(--tilt,0deg)) translateY(0)}50%{transform:rotate(calc(var(--tilt,0deg) + 1.5deg)) translateY(-8u)}}
-.screen[data-screen="menu"]>.screen-body,.screen[data-screen="menu"]>.menu-logo,.screen[data-screen="menu"]>.ftr{position:relative;z-index:1}
 .polaroid.intro-snap{position:absolute;left:max(24u,3vw);bottom:max(60u,12vh);width:min(118u,15vw);z-index:5;animation:snapIn .7s var(--spring) both;pointer-events:none;transition:opacity .5s,transform .5s}
 .polaroid.intro-snap.out{opacity:0;transform:translateX(-40u) rotate(-8deg)}
 .pause-snap{position:absolute;right:max(20u,3.5vw);bottom:max(12u,2.5vh);width:min(104u,12vw);z-index:1}

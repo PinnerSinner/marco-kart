@@ -1,34 +1,25 @@
-// HUD styles: everything visible while racing. Positions are in design units on the 960x540 stage.
-import { ring } from './util.js';
+// HUD styles: everything visible while racing. Positions are in design units on the 960x540 stage (`12u`, `12f`), except the held item and
+// the minimap column, which use `Ni` / `Nt` and `Nm` / `Nk` (see hudUnits in util.js): they follow min(viewport height, 55% of width) so a
+// very wide window does not shrink them, and are clamped so a phone and a 4K screen both stay sane.
+import { ring, hudUnits } from './util.js';
 
-export const hudCss = () => `
-.hud{position:absolute;inset:0;pointer-events:none;visibility:hidden;opacity:0;transition:opacity .3s,visibility 0s .3s;
+export const hudCss = () => hudUnits(`
+.hud{--hv:min(1vh,.55vw);--isz:clamp(76px,calc(var(--hv)*19.5),220px);--iu:calc(var(--isz)/76);--msz:clamp(120px,calc(var(--hv)*34),400px);--mu:calc(var(--msz)/150);
+  position:absolute;inset:0;pointer-events:none;visibility:hidden;opacity:0;transition:opacity .3s,visibility 0s .3s;
   padding:max(env(safe-area-inset-top),16u) max(env(safe-area-inset-right),24u) max(env(safe-area-inset-bottom),14u) max(env(safe-area-inset-left),24u)}
 .hud.on{visibility:visible;opacity:1;transition:opacity .3s}
 .hud>*{position:absolute;transition:transform .55s var(--spring),opacity .4s}
 .hud:not(.on) .hud-tl{transform:translateX(-90u)}
-.hud:not(.on) .standings{transform:translateX(-90u)}
 .hud:not(.on) .hud-tr{transform:translateX(90u)}
 .hud:not(.on) .hud-bl{transform:translateY(90u)}
 .hud:not(.on) .hud-br{transform:translateY(90u)}
 .hud:not(.on) .hud-bc{transform:translateY(90u)}
 
-/* top-left: item slot and race clock */
-.hud-tl{left:max(env(safe-area-inset-left),24u);top:max(env(safe-area-inset-top),16u);display:flex;align-items:flex-start;gap:12u}
-/* item slots, roulette and pop-up: see items.js */
-.timer{min-width:158u;padding:8u 16u 8u 18u}
-.timer .lbl{font-size:10f;font-weight:900;letter-spacing:.2em;color:var(--cyan)}
-.timer .tv{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:24f;letter-spacing:.01em;font-variant-numeric:tabular-nums;text-shadow:0 3u 0 rgba(0,0,0,.4);white-space:nowrap}
-.laps{margin-top:4u;display:flex;flex-direction:column;gap:1u;font-variant-numeric:tabular-nums}
-.lrow{display:flex;justify-content:space-between;gap:12u;font-size:11f;font-weight:800;letter-spacing:.04em;opacity:.95}
-.lrow span:first-child{opacity:.7}
-.lrow.live{color:var(--yellow)}
-.lrow.best span:last-child{color:var(--cyan)}
-.lrow.best span:first-child{color:var(--cyan);opacity:1}
-.lrow.empty{opacity:.28}
+/* top-left: the held item (large) with its caption, then the position list. Slots, roulette and caption: see items.js */
+.hud-tl{left:max(env(safe-area-inset-left),24u);top:max(env(safe-area-inset-top),16u);display:flex;flex-direction:column;align-items:flex-start;gap:10u}
 
 /* standings */
-.standings{left:max(env(safe-area-inset-left),24u);top:calc(max(env(safe-area-inset-top),16u) + 132u);width:140u;height:calc(var(--n,8)*17u)}
+.standings{position:relative;flex:none;width:140u;height:calc(var(--n,8)*17u)}
 .srow{position:absolute;left:0;right:0;top:0;height:15u;display:flex;align-items:center;gap:5u;padding-left:2u;transform:translateY(calc(var(--r,0)*17u));transition:transform .4s var(--spring)}
 .srow::before{content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-12deg);border-radius:4u;background:rgba(6,18,42,.72);border:1.5u solid rgba(255,248,236,.28)}
 .srow.me::before{background:linear-gradient(180deg,#FFF3C0,var(--yellow));border-color:var(--ink);box-shadow:0 2u 0 var(--ink)}
@@ -41,20 +32,32 @@ export const hudCss = () => `
 .srow.done .sl{color:var(--green);opacity:1}
 .srow.me.done .sl{color:#0B7A3E}
 
-/* top-right: pause + minimap */
-.hud-tr{right:max(env(safe-area-inset-right),24u);top:max(env(safe-area-inset-top),16u);display:flex;align-items:flex-start;gap:10u}
+/* top-right: pause + the big minimap, with the race clock and the lap splits under it */
+.hud-tr{right:max(env(safe-area-inset-right),24u);top:max(env(safe-area-inset-top),16u);display:flex;flex-direction:column;align-items:flex-end;gap:9m}
+.mm-row{display:flex;align-items:flex-start;gap:8m}
 .pause-btn{pointer-events:auto;position:relative;isolation:isolate;width:30u;height:30u;display:grid;place-items:center;color:var(--paper)}
 .pause-btn::before{content:"";position:absolute;inset:0;z-index:-1;transform:skewX(-8deg);border-radius:8u;background:rgba(6,18,42,.8);border:3u solid var(--paper);box-shadow:0 3u 0 var(--ink)}
 .pause-btn i{display:flex;gap:4u}
 .pause-btn i b{display:block;width:5u;height:14u;border-radius:2u;background:currentColor}
 .pause-btn:active{transform:translateY(2u)}
-.minimap{position:relative;isolation:isolate;width:118u;height:118u}
-.minimap::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:16u;transform:skewX(-5deg);background:radial-gradient(100% 100% at 30% 20%,rgba(29,64,121,.92),rgba(6,18,42,.92));border:4u solid var(--paper);box-shadow:0 6u 0 var(--ink),0 10u 22u rgba(0,0,0,.45)}
-.minimap svg{position:absolute;inset:6u;width:calc(100% - 12u);height:calc(100% - 12u)}
-.mm-dot{stroke:var(--ink);stroke-width:1.4}
-.mm-me{stroke:#fff;stroke-width:2}
-.mm-ring{fill:none;stroke:var(--yellow);stroke-width:1.6;transform-box:fill-box;transform-origin:center;animation:mmPing 1.3s ease-out infinite}
+.minimap{position:relative;isolation:isolate;width:var(--msz);height:var(--msz)}
+.minimap::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:18m;transform:skewX(-5deg);background:radial-gradient(100% 100% at 30% 20%,rgba(29,64,121,.94),rgba(6,18,42,.94));border:4.5m solid var(--paper);box-shadow:0 6m 0 var(--ink),0 10m 22m rgba(0,0,0,.45)}
+.minimap svg{position:absolute;inset:7m;width:calc(100% - 14m);height:calc(100% - 14m)}
+.mm-dot{stroke:var(--ink);stroke-width:2}
+.mm-me{stroke:#fff;stroke-width:2.6}
+.mm-ring{fill:none;stroke:var(--yellow);stroke-width:2.2;transform-box:fill-box;transform-origin:center;animation:mmPing 1.3s ease-out infinite}
 @keyframes mmPing{from{transform:scale(.7);opacity:1}to{transform:scale(2.3);opacity:0}}
+/* race clock: current time, then one row per lap, under the minimap and as wide as it */
+.timer{width:var(--msz);padding:8m 15m 9m 17m}
+.timer .lbl{font-size:9k;font-weight:900;letter-spacing:.2em;color:var(--cyan)}
+.timer .tv{font-family:var(--font-display);font-style:italic;font-weight:900;font-size:25k;letter-spacing:.01em;font-variant-numeric:tabular-nums;text-shadow:0 3m 0 rgba(0,0,0,.4);white-space:nowrap}
+.laps{margin-top:4m;display:flex;flex-direction:column;gap:1m;font-variant-numeric:tabular-nums}
+.lrow{display:flex;justify-content:space-between;gap:12m;font-size:10.5k;font-weight:800;letter-spacing:.04em;opacity:.95}
+.lrow span:first-child{opacity:.7}
+.lrow.live{color:var(--yellow)}
+.lrow.best span:last-child{color:var(--cyan)}
+.lrow.best span:first-child{color:var(--cyan);opacity:1}
+.lrow.empty{opacity:.28}
 
 /* bottom-left: lap + speedometer */
 .hud-bl{left:max(env(safe-area-inset-left),24u);bottom:max(env(safe-area-inset-bottom),14u);display:flex;flex-direction:column;align-items:flex-start;gap:8u}
@@ -171,21 +174,29 @@ export const hudCss = () => `
 .finish-s{margin-top:4u;font-family:var(--font-display);font-style:italic;font-weight:900;font-size:18f;letter-spacing:.12em;color:var(--yellow);text-shadow:${ring(2, 'var(--ink)', 2)}}
 @keyframes finishIn{from{opacity:0;transform:scaleY(.1) scaleX(1.3)}to{opacity:1;transform:none}}
 
-/* phone layout: the touch pad, brake, item and drift buttons own the bottom corners, so lap and speed move up and the place moves under the minimap */
+/* phone layout: the touch pad, brake, item and drift buttons own the bottom corners, so lap and speed move up to the top centre and the place moves left of the minimap */
 .touch .pause-btn{width:max(40px,44u);height:max(40px,44u)}
 .touch .hud-bl{left:50%;margin-left:-70u;bottom:auto;top:max(env(safe-area-inset-top),12u);flex-direction:row;align-items:center;gap:8u}
 .touch .speedo{width:70u;height:40u}
 .touch .speedo svg{display:none}
 .touch .sp-num{top:0;font-size:32f}
 .touch .sp-unit{top:33u;font-size:9f}
-.touch .hud-br{bottom:auto;top:calc(max(env(safe-area-inset-top),16u) + 128u)}
+.touch .hud-br{bottom:auto;top:max(env(safe-area-inset-top),16u);right:calc(max(env(safe-area-inset-right),24u) + var(--msz) + max(40px,44u) + 22u)}
 .touch .place .pn{font-size:76f}
 .touch .place .ps{font-size:24f}
 .touch .place .po{font-size:11f}
 .touch .hud-bc{bottom:max(env(safe-area-inset-bottom),8u)}
 @media (max-height:460px){
+  .hud{--isz:clamp(70px,calc(var(--hv)*21),220px);--msz:clamp(88px,calc(var(--hv)*24.5),400px)}
+  .hud-tl{flex-direction:row;gap:14u}
   .sn{display:none}.standings{width:66u}.srow .spt{width:13u}
-  .timer{min-width:130u}.laps{display:none}
+  .laps{display:none}
   .hud-bc{bottom:max(env(safe-area-inset-bottom),8u)}
 }
-`;
+/* narrow portrait window (the game asks for landscape, but nothing may overlap meanwhile): bigger design unit, lap / speed / place stacked under the clock */
+@media (orientation:portrait) and (max-width:700px){
+  .hud{--u:.28vw}
+  .touch .hud-bl{left:auto;right:max(env(safe-area-inset-right),12px);margin-left:0;top:calc(var(--msz)*1.8 + 28px)}
+  .touch .hud-br{right:max(env(safe-area-inset-right),12px);top:calc(var(--msz)*1.8 + 28px + 108u)}
+}
+`);

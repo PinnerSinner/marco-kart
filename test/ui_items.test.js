@@ -7,7 +7,6 @@ import { ITEM_DEFS } from '../src/race/itemDefs.js';
 import { guideCopy, guideItems, guideCounts, GUIDE_FILTERS } from '../src/ui/itemGuide.js';
 import { itemCopy, popupFor, POP_SECONDS, SLOT_KEYS } from '../src/ui/itemHud.js';
 import { hintRows } from '../src/ui/controlsHint.js';
-import { DEFAULT_BINDINGS, splitBindings } from '../src/ui/screens/controls.js';
 import { mockHud } from './ui_mocks.js';
 
 const SKILL_ITEMS = ['capacitor', 'cronjob', 'legacy'];
@@ -194,15 +193,6 @@ test('controls: the swap control is labelled for every device (Q / Tab, LB, tap 
     const text = hintRows(d).map((r) => r.join(' ')).join('|').toLowerCase();
     assert.ok(text.includes('swap'), `${d} hint mentions swap`);
   }
-});
-
-test('controls: the controls screen lists "Swap the two items" with Q, Tab and LB, and "Use item (front slot)"', () => {
-  const swap = DEFAULT_BINDINGS.find((r) => /swap/i.test(r.action));
-  assert.ok(swap, 'a swap row');
-  const { keyboard, pad } = splitBindings(swap.action, swap.keys);
-  assert.deepEqual(keyboard, ['Q', 'Tab']); assert.deepEqual(pad, ['LB']);
-  const use = DEFAULT_BINDINGS.find((r) => /use item/i.test(r.action));
-  assert.match(use.action, /front/i);
 });
 
 // ---- the HUD mock used by the UI demos matches the two-slot snapshot ---------------------------------------------------------------

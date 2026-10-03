@@ -64,7 +64,7 @@ export class SettingsScreen extends Screen {
       h('div.screen-body.set-body.rise', null,
         col('Sound', ...this.vols.rows, this.speech.el, this.speechMarco.el, this.rude.el, this.blips.el, this.speechNote),
         col('Game', this.speedClass.el, this.quality.el, this.photos.el, this.cari.el, this.shake.el, this.touch.el, this.bubbles.el, this.units.el)),
-      h('div.ftr', null, this.ui.hintBar([['move', 'Move'], ['adjust', 'Change'], ['back', 'Back']]), h('div.ftr-btns', null, this.reset, this.backBtn)));
+      h('div.ftr', null, h('div.ftr-btns', null, this.backBtn, this.reset)));
   }
 
   sync() {

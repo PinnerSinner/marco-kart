@@ -34,7 +34,7 @@ export class AboutScreen extends Screen {
           ...ABOUT.paragraphs.map((p) => h('p', { text: p })),
           h('div.ab-facts', null, ...ABOUT.facts.map(([k, v]) => h('div', null, h('b', { text: k }), h('span', { text: v })))),
           h('ul.ab-quirks', null, ...ABOUT.quirks.map((q) => h('li', { text: q }))))),
-      h('div.ftr', null, this.ui.hintBar([['enter', 'Select'], ['back', 'Back']]), h('div.ftr-btns', null, this.link, this.backBtn)));
+      h('div.ftr', null, h('div.ftr-btns', null, this.backBtn, this.link)));
   }
 
   back() { this.ui.showMenu(); }

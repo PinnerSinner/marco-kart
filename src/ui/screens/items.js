@@ -15,7 +15,7 @@ export class ItemGuideScreen extends Screen {
     this.el.append(
       h('div.hdr.drop-in', null, h('div.hdr-l', null, h('div.hdr-title', { text: 'Item guide' }), h('div.hdr-sub', { text: 'Every item, in plain English' }))),
       h('div.screen-body.ig-body-wrap', null, this.guide.el),
-      h('div.ftr', null, this.ui.hintBar([['move', 'Browse'], ['back', 'Back']]), this.backBtn));
+      h('div.ftr', null, this.backBtn));
   }
 
   enter() { this.guide.reset(); }

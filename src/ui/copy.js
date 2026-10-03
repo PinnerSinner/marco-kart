@@ -62,7 +62,6 @@ export const MENU_COPY = {
   gp: { title: 'Grand Prix', text: 'Race the whole Marcoverse Cup: four tracks, points for every finish and a trophy at the end.' },
   single: { title: 'Single Race', text: 'One track of your choosing, any difficulty, no strings attached.' },
   time: { title: 'Time Trial', text: 'Just you and the clock. No rivals, no items, and no excuses. Chase your best lap.' },
-  controls: { title: 'Controls', text: 'Keyboard, gamepad and touch. Everything you need to know, minus the manual.' },
   items: { title: 'Item Guide', text: 'All 24 items in plain English: what each one does, what it is good against, and which ones take real skill.' },
   settings: { title: 'Settings', text: 'Volumes, graphics quality, camera shake, touch controls and units.' },
   about: { title: 'About Marco', text: 'Meet the instructor behind the wheel and the brand behind the Marcoverse.' },
@@ -93,6 +92,15 @@ export const ABOUT = {
 };
 
 /** Menu greeting lines shown in the speech bubble on the title hero. */
+/** Marco's photos that cycle on the title and main menu: asset key, optional `fit: 'contain'` for cut-outs, and a caption. */
+export const HERO_PHOTOS = [
+  { key: 'marco_full', fit: 'contain', cap: 'Throne of Marco' },
+  { key: 'photo_desk_point', cap: 'The labs are ready' },
+  { key: 'photo_snake_chair', cap: 'Gaming chair, flat white' },
+  { key: 'photo_graduation', cap: 'Already forgotten everything' },
+  { key: 'photo_sugarloaf', cap: 'Sugarloaf, Rio' },
+];
+
 export const HERO_LINES = [
   'Right then, shall we begin?',
   'Mind the roundabouts.',

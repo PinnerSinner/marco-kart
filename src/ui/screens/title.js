@@ -7,15 +7,8 @@ import { portrait } from '../portraits.js';
 import { Assets } from '../../core/assets.js';
 import { CHARACTERS, KARTS } from '../../core/roster.js';
 import { HERO_LINES } from '../copy.js';
+import { photoCycle } from '../photoCycle.js';
 import { detectTouch } from '../settings.js';
-
-const HERO_PHOTOS = [
-  { key: 'marco_full', fit: 'contain', cap: 'Throne of Marco' },
-  { key: 'photo_desk_point', cap: 'The labs are ready' },
-  { key: 'photo_snake_chair', cap: 'Gaming chair, flat white' },
-  { key: 'photo_graduation', cap: 'Already forgotten everything' },
-  { key: 'photo_sugarloaf', cap: 'Sugarloaf, Rio' },
-];
 
 export class TitleScreen extends Screen {
   constructor(ui) { super(ui, 'title'); }
@@ -41,12 +34,9 @@ export class TitleScreen extends Screen {
       h('div.chq-plate.disp', null, h('small', { text: 'DRIVER 01' }), h('b', { text: 'MARCO' })), h('span.chq-side'));
     // hero: a photo card that cycles through a few of Marco's best photos (placeholders only for missing ones)
     let hero;
-    this.slides = HERO_PHOTOS.filter((k) => Assets.has(k.key));
-    if (this.slides.length) {
-      this.cardEls = this.slides.map((k, i) => h('div.hero-slide' + (k.fit === 'contain' ? '.contain' : '') + (i === 0 ? '.on' : ''), null,
-        h('img', { attrs: { src: Assets.uri(k.key), alt: 'Marco', draggable: 'false' }, on: { error: (e) => e.target.closest('.hero-slide').classList.add('missing') } }),
-        h('span.hero-cap', { text: k.cap })));
-      hero = h('div.hero.photo.slide-r', null, h('div.hero-card', null, ...this.cardEls));
+    this.cycle = photoCycle('hero-card');
+    if (this.cycle.el) {
+      hero = h('div.hero.photo.slide-r', null, this.cycle.el);
     } else {
       hero = h('div.hero.slide-r', null,
         h('div.hero-burst'),
@@ -62,19 +52,10 @@ export class TitleScreen extends Screen {
 
   enter() {
     this.bubble.textContent = HERO_LINES[Math.floor(Math.random() * HERO_LINES.length)];
-    this._idx = 0; this._show(0);
-    clearInterval(this._cycle);
-    if (this.cardEls?.length > 1) this._cycle = setInterval(() => this._show(this._idx + 1), 3400);
+    this.cycle.start();
   }
 
-  leave() { clearInterval(this._cycle); }
-
-  _show(i) {
-    const els = this.cardEls; if (!els?.length) return;
-    // skip slides whose image failed to load
-    for (let n = 0; n < els.length; n++) { this._idx = (i + n) % els.length; if (!els[this._idx].classList.contains('missing')) break; }
-    els.forEach((e, k) => e.classList.toggle('on', k === this._idx));
-  }
+  leave() { this.cycle.stop(); }
 
   navOptions() {
     return { initial: this.press, onAnyKey: () => { this.ui.sfx('ui-confirm'); this._start(); } };

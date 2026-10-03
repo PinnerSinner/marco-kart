@@ -31,7 +31,7 @@ const TRACK_TAGS = {
   marcoverse: [['Space', 'cyan'], ['No walls', 'red']],
 };
 
-/** Shared behaviour: header with step pips, footer with hints and an on-screen back button. */
+/** Shared behaviour: header with step pips, footer with an on-screen back button. */
 class SelectBase extends Screen {
   constructor(ui, name) { super(ui, name); }
 
@@ -45,7 +45,7 @@ class SelectBase extends Screen {
     this.el.append(
       h('div.hdr.drop-in', null, h('div.hdr-l', null, this.title, this.sub), this.steps),
       this.body,
-      h('div.ftr', null, this.ui.hintBar(this.hints ?? [['move', 'Move'], ['enter', 'Select'], ['back', 'Back']]), this.backBtn));
+      h('div.ftr', null, this.backBtn));
     return this.body;
   }
 
@@ -131,7 +131,7 @@ class Preview {
 }
 
 export class CharScreen extends SelectBase {
-  constructor(ui) { super(ui, 'char'); this.hints = [['move', 'Move'], ['enter', 'Choose'], ['back', 'Back']]; }
+  constructor(ui) { super(ui, 'char'); }
 
   build() {
     const body = this.chrome('Choose your racer');
@@ -190,7 +190,7 @@ export class CharScreen extends SelectBase {
 }
 
 export class KartScreen extends SelectBase {
-  constructor(ui) { super(ui, 'kart'); this.hints = [['move', 'Move'], ['enter', 'Choose'], ['back', 'Back']]; }
+  constructor(ui) { super(ui, 'kart'); }
 
   build() {
     const body = this.chrome('Choose your kart');
@@ -258,7 +258,7 @@ function tierBadge(tier, colour) {
 }
 
 export class DifficultyScreen extends SelectBase {
-  constructor(ui) { super(ui, 'difficulty'); this.hints = [['move', 'Move'], ['enter', 'Choose'], ['back', 'Back']]; }
+  constructor(ui) { super(ui, 'difficulty'); }
 
   build() {
     const body = this.chrome('Pick your level');
@@ -294,7 +294,7 @@ export class DifficultyScreen extends SelectBase {
 }
 
 export class TrackScreen extends SelectBase {
-  constructor(ui) { super(ui, 'track'); this.hints = [['move', 'Move'], ['enter', 'Race'], ['back', 'Back']]; }
+  constructor(ui) { super(ui, 'track'); }
 
   build() {
     const body = this.chrome('Choose your track');
